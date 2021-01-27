@@ -14,6 +14,8 @@ class MainViewController: UIViewController {
     return minY
   }
 
+  var testDataIsEmpty = false
+
   lazy private var browsingHistoryView: ICBrowsingHistoryView = {
     let y: CGFloat = tabbarMinY - 10
     return ICBrowsingHistoryView(tabbarY: tabbarMinY, origin: .init(x: 0, y: y))
@@ -40,5 +42,21 @@ class MainViewController: UIViewController {
   private func setupUserInterface() {
     view.backgroundColor = .systemPink
     view.addSubview(browsingHistoryView)
+
+    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Change Data Status", style: .plain, target: self, action: #selector(testButtonDidPressed))
+
+    navigationItem.rightBarButtonItem = UIBarButtonItem(title: "push", style: .plain, target: self, action: #selector(pushButtonDidPressed))
+  }
+
+  // MARK: - Action Methods
+
+  @objc private func testButtonDidPressed() {
+    testDataIsEmpty = !testDataIsEmpty
+    browsingHistoryView.frame.size.height = testDataIsEmpty ? 50 : UIScreen.main.bounds.height / 2
+  }
+
+  @objc private func pushButtonDidPressed() {
+    let vc = NextViewController()
+    navigationController?.pushViewController(vc, animated: true)
   }
 }

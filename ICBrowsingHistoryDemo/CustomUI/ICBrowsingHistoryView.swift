@@ -9,14 +9,13 @@ import UIKit
 
 class ICBrowsingHistoryView: UIView {
 
-  private var isDrag = false
   private var tabbarY: CGFloat
 
   private var dragRange: (minY: CGFloat, maxY: CGFloat) {
     return (tabbarY - bounds.height, tabbarY - 10)
   }
 
-  private var touchBeganY: CGFloat = 0
+  private var touchesBeganY: CGFloat = 0
 
   lazy private var scrollItem: UIButton = {
     let button = UIButton(type: .system)
@@ -42,10 +41,6 @@ class ICBrowsingHistoryView: UIView {
     fatalError("init(coder:) has not been implemented")
   }
 
-  override func layoutSubviews() {
-    super.layoutSubviews()
-  }
-
   override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
     for subview in subviews where !subview.isHidden && subview.isUserInteractionEnabled && subview.point(inside: convert(point, to: subview), with: event) {
         return true
@@ -56,7 +51,7 @@ class ICBrowsingHistoryView: UIView {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     super.touchesBegan(touches, with: event)
     print("ICBrowsingHistoryView ", #function)
-    touchBeganY = frame.origin.y
+    touchesBeganY = frame.origin.y
   }
 
   override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -73,32 +68,25 @@ class ICBrowsingHistoryView: UIView {
     guard let touch = touches.first else { return }
     let viewFrameY: CGFloat = frame.origin.y
     print("frame.origin.y: \(frame.origin.y)")
+    print("touchesBeganY: \(touchesBeganY)")
     print("range; \(dragRange)")
     print("touch.location(in: scrollItem): \(touch.location(in: scrollItem))")
 
-    if viewFrameY == dragRange.minY {
-      print("viewFrameY == dragRange.minY")
-      dismissAnimation()
-      print("========================================================>")
-      return
+    switch viewFrameY {
+      case let y where y == dragRange.minY:
+        dismissAnimation()
+      case let y where y == dragRange.maxY:
+        presentAnimation()
+      case let y where touchesBeganY > y:
+        print("y > touchesBeganY")
+        presentAnimation()
+      default:
+        print("default")
+        dismissAnimation()
     }
-
-    if viewFrameY == dragRange.maxY {
-      print("viewFrameY == dragRange.maxY")
-      presentAnimation()
-      print("========================================================>")
-      return
-    }
-
-    if viewFrameY > touchBeganY  {
-      print("viewFrameY > touchBeganY")
-      dismissAnimation()
-    } else {
-      print("Other result")
-      presentAnimation()
-    }
-    print("========================================================>")
+    print("=========================>")
   }
+  
 
   // MARK: - Private Methods
 
@@ -113,8 +101,6 @@ class ICBrowsingHistoryView: UIView {
       guard let self = self else { return }
       self.frame.origin.y = self.dragRange.minY
       self.scrollItem.setTitleColor(.systemOrange, for: .normal)
-    } completion: { [weak self] _ in
-      self?.isDrag = true
     }
   }
 
@@ -123,8 +109,6 @@ class ICBrowsingHistoryView: UIView {
       guard let self = self else { return }
       self.frame.origin.y = self.dragRange.maxY
       self.scrollItem.setTitleColor(.lightGray, for: .normal)
-    } completion: { [weak self] _ in
-      self?.isDrag = false
     }
   }
 }

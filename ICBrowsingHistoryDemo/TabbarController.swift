@@ -14,6 +14,8 @@ class TabbarController: UITabBarController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupTabbarItem()
+
+    print(tabBar.frame.minY)
   }
 
   // MARK: - Private Methods
