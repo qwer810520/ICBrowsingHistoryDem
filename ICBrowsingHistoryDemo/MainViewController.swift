@@ -9,17 +9,7 @@ import UIKit
 
 class MainViewController: UIViewController {
 
-  var tabbarMinY: CGFloat {
-    guard let minY = tabBarController?.tabBar.frame.minY else { return 0 }
-    return minY
-  }
-
   var testDataIsEmpty = false
-
-  lazy private var browsingHistoryView: ICBrowsingHistoryView = {
-    let y: CGFloat = tabbarMinY - 10
-    return ICBrowsingHistoryView(tabbarY: tabbarMinY, origin: .init(x: 0, y: y))
-  }()
 
   // MARK: - UIViewController
 
@@ -30,6 +20,19 @@ class MainViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     setupUserInterface()
+    guard let tabbar = tabBarController as? TabbarController else { return }
+    tabbar.isHidden = false
+  }
+
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    guard let tabbar = tabBarController as? TabbarController else { return }
+    tabbar.isHidden = true
+  }
+
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+
   }
 
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -41,7 +44,7 @@ class MainViewController: UIViewController {
 
   private func setupUserInterface() {
     view.backgroundColor = .systemPink
-    view.addSubview(browsingHistoryView)
+//    view.addSubview(browsingHistoryView)
 
     navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Change Data Status", style: .plain, target: self, action: #selector(testButtonDidPressed))
 
@@ -52,7 +55,7 @@ class MainViewController: UIViewController {
 
   @objc private func testButtonDidPressed() {
     testDataIsEmpty = !testDataIsEmpty
-    browsingHistoryView.frame.size.height = testDataIsEmpty ? 50 : UIScreen.main.bounds.height / 2
+//    browsingHistoryView.frame.size.height = testDataIsEmpty ? 50 : UIScreen.main.bounds.height / 2
   }
 
   @objc private func pushButtonDidPressed() {

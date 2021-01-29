@@ -17,6 +17,10 @@ class ICBrowsingHistoryView: UIView {
 
   private var touchesBeganY: CGFloat = 0
 
+  private var totalHeight: CGFloat {
+    return bounds.height + scrollItem.frame.height
+  }
+
   lazy private var scrollItem: UIButton = {
     let button = UIButton(type: .system)
     let height: CGFloat = 30
